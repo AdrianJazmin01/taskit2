@@ -1,11 +1,13 @@
 import { sessionMiddleware } from '@/lib/session-mddleware';
-import { createWorkspaceSchema } from './../schemas';
+import { createWorkspaceSchema, updateWorkspaceSchema } from './../schemas';
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
 import { DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, WORKSPACE_ID } from '@/config';
 import { ID, Query } from 'node-appwrite';
 import { MemberRole } from '@/features/members/types';
 import { generateInviteCode } from '@/lib/utils';
+import { Getmember } from '@/features/members/utils';
+import { error } from 'console';
  
 
 const app = new Hono()
@@ -89,6 +91,63 @@ const app = new Hono()
 
       return c.json({ data: workspace });
     }
-  );
+  )
+
+  .patch(
+    "/:workspaceId",
+    sessionMiddleware,
+    zValidator("form", updateWorkspaceSchema),
+    async (c) => {
+      const databases = c.get("databases");
+      const storage = c.get("storage");
+      const user = c.get("user");
+
+      const { workspaceId } = c.req.param();
+      const { name, image } = c.req.valid("form")
+
+      const member = await Getmember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if(!member || member.role !== MemberRole.ADMIN) {
+        return c.json({ error: "Unathorized" }, 401);
+      }
+
+      let uploadedImageUrl: string | undefined;
+
+      if(image instanceof File){
+        const file =  await storage.createFile(
+          IMAGES_BUCKET_ID,
+          ID.unique(),
+          image,
+        );
+
+        const arrayBuffer = await storage.getFilePreview(
+          IMAGES_BUCKET_ID,
+          file.$id,
+        );
+
+        uploadedImageUrl = `data:image/png;base64,${Buffer.from(arrayBuffer).toString("base64")}`;
+      } else {
+        uploadedImageUrl = image;
+      }
+
+      const workspace = await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+        {
+          name,
+          imagesUrl: uploadedImageUrl
+        }
+      );
+
+      return c.json({ data: workspace });
+    } 
+  )
+
+
 
 export default app;
