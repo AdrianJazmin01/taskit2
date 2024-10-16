@@ -43,5 +43,8 @@ import { cookies } from "next/headers";
       get account () {
         return new Account(client);
       },
+      get users(){
+        return new Users(client);
+      }
     };
   };
