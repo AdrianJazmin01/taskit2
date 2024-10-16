@@ -12,11 +12,13 @@ import { Button } from "@/components/ui/button";
 import { useRef } from "react";
 import Image from "next/image";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { ChevronLeft, ImageIcon } from "lucide-react";
+import { ChevronLeft, CircleAlert, ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { Workspace } from "../types";
 import { useUpdateWorkspace } from "../api/use-update-workspace";
+import { useConfirm } from "@/hooks/use-confirm";
+import { useDeleteWorkspace } from "../api/use-delete-workspace";
 
 interface EditWorkspaceFormProps {
   onCancel?: () => void;
@@ -27,8 +29,16 @@ interface EditWorkspaceFormProps {
 
 export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceFormProps) => {
   const router = useRouter()
-  const inputRef = useRef<HTMLInputElement>(null);
   const {mutate,isPending} = useUpdateWorkspace();
+  const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace();
+  
+  const inputRef = useRef<HTMLInputElement>(null);
+  
+  const [DeleteDialog, confirmDelete] = useConfirm(
+    "Delete Workspace",
+    "This action cannot be undone.",
+    "destructive",
+  );
 
   const form = useForm<z.infer<typeof updateWorkspaceSchema>>({
     resolver: zodResolver(updateWorkspaceSchema),
@@ -37,6 +47,20 @@ export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceForm
       image: initialValues.imagesUrl ?? "",
     },
 });
+
+const handleDelete = async () => {
+  const ok = await confirmDelete();
+
+  if(!ok) return;
+
+  deleteWorkspace({
+    param: { workspaceId: initialValues.$id },
+  }, {
+    onSuccess: () =>{
+      window.location.href = "/";
+    }
+  });
+};
   
 const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
   const finalValues = {
@@ -66,6 +90,8 @@ const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
 
 
   return (
+    <div className="flex flex-col gap-y-4">
+      <DeleteDialog />
     <Card className="w-full h-full border-none shadow-xl">
       <CardHeader className="flex flex-row items-center gap-x-4 p-7 space-y-0">
         <Button size="xs" variant={"secondary"} onClick={onCancel ? onCancel : () => router.push(`/workspaces/${initialValues.$id}`) }>
@@ -192,5 +218,29 @@ const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
         </Form>
       </CardContent>
     </Card>
+    <Card className="w-full h-full border-none shadow-xl">
+      <CardContent className="p-7">
+        <div className="flex flex-col">
+          <div className="flex flex-row py-1">
+          <CircleAlert color="Red" className="mr-2"/>
+            <h3 className="font-bold flex flex-row">   Danger Zone</h3>
+          </div>
+            <p className="text-sm text-muted-foreground">
+                Deleting a Workspace is irreversible and will remove all associated data. 
+            </p>
+        <Button 
+        className="mt-6 w-fit ml-auto"
+        size={"sm"}
+        variant={"destructive"}
+        type="button"
+        disabled={ isPending || isDeletingWorkspace}
+        onClick={handleDelete}
+        >
+          Delete Workspace
+        </Button>
+        </div>
+      </CardContent>
+    </Card>
+    </div>
   )
 }
