@@ -1,3 +1,4 @@
+import { Workspace } from './../types';
 import { sessionMiddleware } from '@/lib/session-mddleware';
 import { createWorkspaceSchema, updateWorkspaceSchema } from './../schemas';
 import { zValidator } from "@hono/zod-validator";
@@ -7,6 +8,7 @@ import { ID, Query } from 'node-appwrite';
 import { MemberRole } from '@/features/members/types';
 import { generateInviteCode } from '@/lib/utils';
 import { Getmember } from '@/features/members/utils';
+import { z } from 'zod';
  
 
 const app = new Hono()
@@ -174,7 +176,81 @@ const app = new Hono()
       return c.json({data:{$id: workspaceId}});
     }
   )
+  .post(
+    "/:workspaceId/reset-invite-code",
+    sessionMiddleware,
+    async (c) => {
+      const databases = c.get("databases");
+      const user = c.get("user");
 
+      const { workspaceId } = c.req.param()
 
+      const member = await Getmember({
+        databases,
+        workspaceId,
+        userId: user.$id
+      });
+
+      if(!member || member.role !== MemberRole.ADMIN){
+        return c.json ({Error: "Unauthorized"}, 401)
+      }
+
+      const Workspace =await databases.updateDocument(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+        {
+          inviteCode: generateInviteCode(6)
+        }
+      );
+
+      return c.json({data:Workspace});
+    }
+  )
+  .post(
+    "/:workspaceId/join",
+    sessionMiddleware,
+    zValidator("json", z.object({ code: z.string() })),
+    async (c) => {
+      const { workspaceId } = c.req.param();
+      const { code } = c.req.valid("json");
+
+      const databases = c.get("databases");
+      const user = c.get("user");
+    
+      const member = await Getmember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if(member){
+        return c.json({ error: "Already a Member"}, 400);
+      }
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+      );
+
+      if(workspace.inviteCode !== code){
+        return c.json({error:"Invalid Invite Code"}, 400);
+      }
+
+      await databases.createDocument(
+        DATABASE_ID,
+        MEMBERS_ID,
+        ID.unique(),
+        {
+          workspaceId,
+          userId: user.$id,
+          role: MemberRole.MEMBER,
+        },
+      );
+
+      return c.json({data:workspace});
+    }
+  );
 
 export default app;
