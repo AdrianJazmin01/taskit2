@@ -148,6 +148,7 @@ const app = new Hono()
       return c.json({ data: workspace });
     } 
   )
+  
   .delete(
     "/:workspaceId",
     sessionMiddleware,
@@ -176,6 +177,7 @@ const app = new Hono()
       return c.json({data:{$id: workspaceId}});
     }
   )
+
   .post(
     "/:workspaceId/reset-invite-code",
     sessionMiddleware,
@@ -207,6 +209,7 @@ const app = new Hono()
       return c.json({data:Workspace});
     }
   )
+
   .post(
     "/:workspaceId/join",
     sessionMiddleware,

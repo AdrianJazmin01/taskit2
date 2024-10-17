@@ -23,7 +23,6 @@ interface CreateProjectFormProps {
 };
 
 
-
 export const CreateProjectForm = ({ onCancel }: CreateProjectFormProps) => {
   const workspaceId = useWorkspaceId();
   const router = useRouter()
@@ -46,10 +45,10 @@ const onSubmit =(values: z.infer<typeof createProjectSchema>) =>{
 
   mutate({form: finalValues},{
 
-    onSuccess: () =>{
+    onSuccess: ({ data }) =>{
       form.reset();
-      // onCancel?.();
-      } 
+      router.push(`/workspaces/${workspaceId}/projects/${data.$id}`)
+    } 
     });
 };
 
