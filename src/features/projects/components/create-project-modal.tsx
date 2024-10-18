@@ -4,7 +4,7 @@ import { ResponsiveModal } from "@/components/responsive-modal";
 import { useCreateProjectModal } from "../hooks/use-create-project-modal";
 import { CreateProjectForm } from "./create-project-form";
 
-export const CreatedProjectModal =( ) => {
+export const CreateProjectModal =( ) => {
   const { isOpen, setIsOpen, close} = useCreateProjectModal();
 
   return(
