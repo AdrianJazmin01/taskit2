@@ -6,12 +6,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Loader, PlusSquareIcon } from "lucide-react";
 import { useCreateTaskModal } from "../hooks/use-create-task-modal";
 import { useWorkspaceId } from "@/features/workspaces/hooks/use-workspace-id";
-import { useGetTasks } from "../api/use-get-task";
+import { useGetTasks } from "../api/use-get-tasks";
 import { useQueryState } from "nuqs";
 import { DataFilters } from "./data-filters";
 import { useTaskFilters } from "../hooks/use-task-filter";
 import { DataTable } from "./data-table";
 import { columns } from "./columns";
+import { DataKanban } from "./data-kanban";
+import { useCallback } from "react";
+import { TaskStatus } from "../types";
+import { useBulkUpdateTask } from "../api/use-bulk-update-task";
 
 
 
@@ -28,20 +32,30 @@ export const TaskViewSwitcher = () => {
       defaultValue: "table",
     });
 
-  const workspaceId = useWorkspaceId();
-
-  const { 
-    data: tasks, 
-    isLoading: isLoadingTasks 
-  } = useGetTasks({
-    workspaceId,
-    status,
-    assigneeId,
-    projectId,
-    dueDate,
-  });
-
+    const workspaceId = useWorkspaceId();
     const { open } = useCreateTaskModal();
+
+    const { mutate: bulkUpdate } = useBulkUpdateTask();
+    
+    const { 
+      data: tasks, 
+      isLoading: isLoadingTasks 
+    } = useGetTasks({
+      workspaceId,
+      status,
+      assigneeId,
+      projectId,
+      dueDate,
+    });
+
+    const onKanbanChange = useCallback((
+      tasks: { $id: string; status: TaskStatus; position: number; } []
+    ) =>{
+      bulkUpdate({
+      json: {tasks},
+      });
+    }, [bulkUpdate])
+
   
   return (
     <Tabs 
@@ -87,10 +101,10 @@ export const TaskViewSwitcher = () => {
           ):(
           <>
             <TabsContent value="table" className="mt-0"> 
-            <DataTable columns={columns} data={tasks?.documents ?? []} />
+              <DataTable columns={columns} data={tasks?.documents ?? []} />
             </TabsContent>
             <TabsContent value="kanban" className="mt-0"> 
-            {JSON.stringify(tasks)}
+              <DataKanban onChange={onKanbanChange} data={tasks?.documents ?? []}/>
             </TabsContent>
             <TabsContent value="calendar" className="mt-0"> 
             {JSON.stringify(tasks)}
