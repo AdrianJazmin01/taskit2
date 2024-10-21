@@ -18,4 +18,5 @@ export enum TaskStatus {
     projectId: string;
     position: number;
     dueDate: string;
+    description?:  string;
   }
