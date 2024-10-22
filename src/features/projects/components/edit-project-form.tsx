@@ -74,12 +74,7 @@ const onSubmit =(values: z.infer<typeof updateProjectSchema>) =>{
   mutate({
     form: finalValues, 
     param: { projectId: initialValues.$id }
-  },{
-
-    onSuccess: () =>{
-      form.reset();
-    }, 
-    });
+  });
 };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) =>{

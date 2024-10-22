@@ -92,12 +92,7 @@ const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
   mutate({
     form: finalValues, 
     param: { workspaceId: initialValues.$id }
-  },{
-
-    onSuccess: () =>{
-      form.reset();
-    }, 
-    });
+  });
 };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) =>{

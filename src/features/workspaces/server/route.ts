@@ -1,14 +1,16 @@
+import { WORKSPACE_ID } from './../../../config';
 import { Workspace } from './../types';
 import { sessionMiddleware } from '@/lib/session-mddleware';
 import { createWorkspaceSchema, updateWorkspaceSchema } from './../schemas';
 import { zValidator } from "@hono/zod-validator";
 import { Hono } from "hono";
-import { DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID, WORKSPACE_ID } from '@/config';
+import { DATABASE_ID, IMAGES_BUCKET_ID, MEMBERS_ID,  } from '@/config';
 import { ID, Query } from 'node-appwrite';
 import { MemberRole } from '@/features/members/types';
 import { generateInviteCode } from '@/lib/utils';
 import { Getmember } from '@/features/members/utils';
 import { z } from 'zod';
+import { json } from 'stream/consumers';
  
 
 const app = new Hono()
@@ -39,6 +41,52 @@ const app = new Hono()
     
     return c.json({ data: workspaces });
   })
+
+  .get(
+    "/:workspaceId",
+    sessionMiddleware,
+    async(c) => {
+      const user = c.get("user");
+      const databases = c.get("databases");
+      const { workspaceId } = c.req.param();
+
+      const member = await Getmember({
+        databases,
+        workspaceId,
+        userId: user.$id,
+      });
+
+      if(!member){
+        return c.json ({Error: "Unauthorized"}, 401)
+      };
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+      );
+
+      return c.json({ data: workspace })
+    }
+  )
+
+  .get(
+    "/:workspaceId/info",
+    sessionMiddleware,
+    async(c) => {
+      const databases = c.get("databases");
+      const { workspaceId } = c.req.param();
+
+
+      const workspace = await databases.getDocument<Workspace>(
+        DATABASE_ID,
+        WORKSPACE_ID,
+        workspaceId,
+      );
+
+      return c.json({ data: {$id: workspace.$id, name: workspace.name, imagesUrl: workspace.imagesUrl} })
+    }
+  )
 
   .post(
     "/", zValidator("form", createWorkspaceSchema),
