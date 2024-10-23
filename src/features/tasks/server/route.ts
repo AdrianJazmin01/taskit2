@@ -376,6 +376,10 @@ const app = new Hono()
 
       const workspaceId = workspaceIds.values().next().value;
 
+      if(!workspaceId){
+        return c.json({ error: "Workspace Id is Required" }, 400)
+      }
+
       const member = await Getmember({
         databases,
         workspaceId,

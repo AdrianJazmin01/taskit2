@@ -29,7 +29,7 @@ interface EditProjectFormProps {
 
 export const EditProjectForm = ({ onCancel, initialValues }: EditProjectFormProps) => {
   const router = useRouter()
-  const {mutate,isPending} = useUpdateProject();
+  const {mutate, isPending} = useUpdateProject();
   const { mutate: deleteProject, isPending: isDeletingProject } = useDeleteProject();
     
   const inputRef = useRef<HTMLInputElement>(null);
@@ -230,7 +230,7 @@ const onSubmit =(values: z.infer<typeof updateProjectSchema>) =>{
         size={"sm"}
         variant={"destructive"}
         type="button"
-        disabled={ isPending}
+        disabled={isDeletingProject}
         onClick={handleDelete}
         >
           Delete project

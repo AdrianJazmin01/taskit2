@@ -3,7 +3,6 @@ import "server-only";
 import { 
   Client,
   Account,
-  Storage,
   Databases, 
   Users
  } from "node-appwrite";

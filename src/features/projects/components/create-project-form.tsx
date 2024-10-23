@@ -45,9 +45,9 @@ const onSubmit =(values: z.infer<typeof createProjectSchema>) =>{
 
   mutate({form: finalValues},{
 
-    onSuccess: ({ data }) =>{
+    onSuccess: () =>{
       form.reset();
-      router.push(`/workspaces/${workspaceId}/projects/${data.$id}`)
+      router.push(`/workspaces/${workspaceId}`)
     } 
     });
 };
