@@ -112,6 +112,26 @@ export const columns: ColumnDef<Task>[] = [
   },
 
   {
+    accessorKey: "tags",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Tags
+          <ArrowUpDown className="ml-2 h-3 w-3" />
+        </Button>
+      )
+    },
+
+    cell: ({ row }) => {
+      const tags = row.original.tags; 
+      return <Badge variant={tags}>{(tags)}</Badge>
+    }
+  },
+
+  {
     accessorKey: "dueDate",
     header: ({ column }) => {
       return (

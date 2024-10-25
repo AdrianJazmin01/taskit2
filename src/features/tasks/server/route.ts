@@ -6,7 +6,7 @@ import { Getmember } from "@/features/members/utils";
 import { DATABASE_ID, MEMBERS_ID, PROJECTS_ID, TASKS_ID } from "@/config";
 import { ID, Query } from "node-appwrite";
 import { z } from "zod";
-import { Task, TaskStatus } from "../types";
+import { Task, TaskStatus, TaskTags } from "../types";
 import { createAdminClient } from "@/lib/appwrite";
 import { Project } from "@/features/projects/types";
 
@@ -56,6 +56,7 @@ const app = new Hono()
         projectId: z.string().nullish(),
         assigneeId: z.string().nullish(),
         status: z.nativeEnum(TaskStatus).nullish(),
+        tags: z.nativeEnum(TaskTags).nullish(),
         search: z.string().nullish(),
         dueDate: z.string().nullish(),
       })
@@ -69,6 +70,7 @@ const app = new Hono()
         workspaceId,
         projectId,
         status,
+        tags,
         search,
         assigneeId,
         dueDate,
@@ -96,6 +98,10 @@ const app = new Hono()
       if(status){
         console.log("status", status);
         query.push(Query.equal("status", status));
+      }  
+      if(tags){
+        console.log("tags", tags);
+        query.push(Query.equal("tags", tags));
       }  
       if(assigneeId){
         console.log("assigneeId", assigneeId);
@@ -178,6 +184,7 @@ const app = new Hono()
       const{
         name,
         status,
+        tags,
         workspaceId,
         projectId,
         dueDate,
@@ -218,6 +225,7 @@ const app = new Hono()
         {
           name,
           status,
+          tags,
           workspaceId,
           projectId,
           dueDate,

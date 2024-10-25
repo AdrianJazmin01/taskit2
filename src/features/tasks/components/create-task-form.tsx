@@ -15,7 +15,7 @@ import { createTaskSchema } from "../schemas";
 import { DatePicker } from "@/components/date-picker";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { MemberAvatar } from "@/features/members/components/member-avatar";
-import { TaskStatus } from "../types";
+import { TaskStatus, TaskTags } from "../types";
 import { ProjectAvatar } from "@/features/projects/components/project-avatar";
 
 interface CreateTaskFormProps {
@@ -167,6 +167,42 @@ const onSubmit =(values: z.infer<typeof createTaskSchema>) =>{
                        </SelectItem>
                        <SelectItem value={TaskStatus.DONE}>
                         Done
+                       </SelectItem>
+                      </SelectContent>
+                    </Select>
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="tags"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Tags
+                  </FormLabel>
+                    <Select
+                    defaultValue={field.value}
+                    onValueChange={field.onChange}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Tags"/>
+                        </SelectTrigger>
+                      </FormControl>
+                      <FormMessage/>
+                      <SelectContent>
+                       <SelectItem value={TaskTags.LOW}>
+                        Low
+                       </SelectItem>
+                       <SelectItem value={TaskTags.MID}>
+                        Mid
+                       </SelectItem>
+                       <SelectItem value={TaskTags.HIGH}>
+                        High
+                       </SelectItem>
+                       <SelectItem value={TaskTags.URGENT}>
+                        Urgent
                        </SelectItem>
                       </SelectContent>
                     </Select>
