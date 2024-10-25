@@ -31,7 +31,9 @@ interface EditWorkspaceFormProps {
 
 export const EditWorkspaceForm = ({ onCancel, initialValues }: EditWorkspaceFormProps) => {
   const router = useRouter()
+  
   const {mutate,isPending} = useUpdateWorkspace();
+
   const { mutate: deleteWorkspace, isPending: isDeletingWorkspace } = useDeleteWorkspace();
   
   const { mutate: resetInviteCode, isPending: isResetingInviteCode } = useResetInviteCode();
@@ -83,6 +85,20 @@ const handleResetInviteCode = async () => {
   });
 };
   
+const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
+  const file = e.target.files?.[0];
+  if(file) {
+    form.setValue("image", file);
+  }
+};
+
+const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
+const handleCopyInviteLink = () => {
+  navigator.clipboard.writeText(fullInviteLink)
+  .then(() => toast.success("Invite Link Copied to Clipboard"));
+}
+
+
 const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
   const finalValues = {
     ...values,
@@ -95,18 +111,6 @@ const onSubmit =(values: z.infer<typeof updateWorkspaceSchema>) =>{
   });
 };
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) =>{
-    const file = e.target.files?.[0];
-    if(file) {
-      form.setValue("image", file);
-    }
-  };
-
-  const fullInviteLink = `${window.location.origin}/workspaces/${initialValues.$id}/join/${initialValues.inviteCode}`;
-  const handleCopyInviteLink = () => {
-    navigator.clipboard.writeText(fullInviteLink)
-    .then(() => toast.success("Invite Link Copied to Clipboard"));
-  }
 
   return (
     <div className="flex flex-col gap-y-4">

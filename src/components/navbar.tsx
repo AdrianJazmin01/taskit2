@@ -13,6 +13,10 @@ const pathNameMap = {
     title: " My Projects ",
     description: "Manage your Specific Projects Here!",
   },
+  "conference": {
+    title: " ",
+    description: " ",
+  },
 }
 
 const defaultMap = {

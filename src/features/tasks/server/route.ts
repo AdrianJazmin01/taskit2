@@ -137,8 +137,8 @@ const app = new Hono()
 
           return{
             ...member,
-            name: user.name,
-            email: user.email,
+            name: Users.name,
+            email: Users.email,
           }
         })
       );
