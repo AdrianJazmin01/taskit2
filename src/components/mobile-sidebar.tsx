@@ -4,7 +4,7 @@ import { MenuIcon } from "lucide-react";
 import { Button } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "./ui/sheet"
 import { Sidebar } from "./sidebar";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 
 export const MobileSidebar = () => {
@@ -16,6 +16,7 @@ export const MobileSidebar = () => {
   },[pathname]);
 
   return (
+    <Suspense>
     <Sheet modal={false} open={isOpen} onOpenChange={setIsOpen} >
       <SheetTrigger asChild>
         <Button size="icon" variant={"secondary"} className="lg:hidden">
@@ -26,6 +27,6 @@ export const MobileSidebar = () => {
         <Sidebar/>
       </SheetContent>
     </Sheet>
-  
+    </Suspense>
 );
 };

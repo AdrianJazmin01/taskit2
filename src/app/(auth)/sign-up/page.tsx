@@ -3,6 +3,7 @@
 import { getCurrent } from "@/features/auth/queries";
 import { SignUpCard } from "@/features/auth/components/sign-up-card";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 
 const SignUpPage = async () => {
@@ -10,8 +11,9 @@ const SignUpPage = async () => {
 
   if(user) redirect("/")
 
-  return (
+  return (<Suspense>
       <SignUpCard/>
+      </Suspense>
   )
 }
 

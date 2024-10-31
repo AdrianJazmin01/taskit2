@@ -3,7 +3,7 @@
 import useUser from "@/app/hooks/useUser";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 
 export default function Home() {
@@ -14,7 +14,8 @@ export default function Home() {
   useEffect(() => {
     setFullName("");
   }, []);
-  return (
+  return ( 
+    <Suspense>
     <div className="w-full h-screen">
         <div className="mx-auto max-w-screen-xl px-4 py-32 flex-col gap-10 flex h-screen items-center">
           <Image src="/logo.svg" alt="logo" width={100} height={100} />
@@ -67,5 +68,6 @@ export default function Home() {
           </div>
         </div>
     </div>
+  </Suspense>
   );
 }

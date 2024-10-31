@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useState } from "react";
 import { Task, TaskStatus } from "../types";
 import { DragDropContext, Draggable, Droppable, DropResult, } from "@hello-pangea/dnd";
 import { KanbanColumnHeader } from "./kanban-column-header";
@@ -136,6 +136,7 @@ export const DataKanban = ({ data, onChange, }: DataKanbanProps) => {
   }, [onChange]);
 
   return (
+    <Suspense>
     <DragDropContext onDragEnd={onDragEnd}>
       <div className="flex overflow-x-auto">
         {boards.map((board)=>{
@@ -178,5 +179,6 @@ export const DataKanban = ({ data, onChange, }: DataKanbanProps) => {
         })}
       </div>
     </DragDropContext>
+    </Suspense>
   )
 }
