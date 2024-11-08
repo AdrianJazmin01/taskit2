@@ -23,6 +23,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { registerSchema } from "../schemas";
 import { useRegister } from "../api/use-register";
+import { signUpWithGoogle } from "@/lib/oauths";
 
 
 
@@ -117,6 +118,7 @@ export const SignUpCard = () => {
       </div>
       <CardContent className="p-7 pt-3 flex flex-col gap-y-4">
         <Button
+          onClick={() => signUpWithGoogle()}
           disabled={isPending}
           variant={"secondary"}
           size={"lg"}
