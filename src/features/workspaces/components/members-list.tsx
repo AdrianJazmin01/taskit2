@@ -79,12 +79,10 @@ export const MembersList = () => {
               className="size-10"
               fallbackClassName="text-lg"
               name={member.name}
-               />
-                  <span className={`text-xs font-semibold ${member.role === "ADMIN" ? "text-blue-600" : "text-gray-500"}`}>
-                    {member.role === "ADMIN" ? "Admin" : "Member"}
-                  </span>               
+               />              
                <div className=" flex flex-col">
-                <p className="text-sm font-medium">{member.name}</p>
+                <p className="text-sm font-medium">{member.name} 
+                </p>  
                 <p className="text-xs text-muted-foreground">{member.email}</p>
                </div>
                <DropdownMenu>
