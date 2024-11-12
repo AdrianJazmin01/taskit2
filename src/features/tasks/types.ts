@@ -28,3 +28,11 @@ export enum TaskTags {
     dueDate: string;
     description?:  string;
   }
+
+  export type Comment = Models.Document & {
+    content: string;
+    author: string;         // Can be a user ID or name
+    taskId: string;         // ID of the associated task
+    createdAt: string;      // Date when the comment was created, as an ISO string
+    updatedAt?: string;     // Optional date for when the comment was last updated
+  }
