@@ -107,7 +107,7 @@ export const MembersList = () => {
                       Set as Administrator
                   </DropdownMenuItem>
                   <DropdownMenuItem className="font-medium" 
-                    onClick={() => handleUpdateMember(member.$id, MemberRole.ADMIN)}
+                    onClick={() => handleUpdateMember(member.$id, MemberRole.MEMBER)}
                     disabled={isUpdatingMember}
                     >
                       Set as Member
