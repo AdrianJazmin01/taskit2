@@ -82,6 +82,9 @@ export const MembersList = () => {
                />              
                <div className=" flex flex-col">
                 <p className="text-sm font-medium">{member.name} 
+                <span className={`text-xs font-semibold ${member.role === "ADMIN" ? "text-blue-600" : "text-gray-500"}`}>
+                    {member.role === "ADMIN" ? "Admin" : "Member"}
+                  </span>
                 </p>  
                 <p className="text-xs text-muted-foreground">{member.email}</p>
                </div>
