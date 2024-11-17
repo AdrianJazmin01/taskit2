@@ -216,7 +216,7 @@ const onSubmit =(values: z.infer<typeof createTaskSchema>) =>{
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>
-                    Project Id
+                    Project Name
                   </FormLabel>
                     <Select
                     defaultValue={field.value}

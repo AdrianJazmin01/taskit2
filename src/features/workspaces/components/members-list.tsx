@@ -40,6 +40,10 @@ export const MembersList = () => {
     updateMember({
       json: { role },
       param: { memberId },
+    },{
+      onSuccess: () => {
+        window.location.reload();
+      },
     })
   }
 
