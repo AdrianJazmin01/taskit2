@@ -1,6 +1,7 @@
 "use client";
 
 import { FcGoogle } from "react-icons/fc";
+import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons for show/hide password
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import {
@@ -24,9 +25,12 @@ import Link from "next/link";
 import { loginSchema } from "../schemas";
 import { useLogin } from "../api/use-login";
 import { signUpWithGoogle } from "@/lib/oauths";
+import { useState } from "react";
 
 export const SignInCard = () => {
   const { mutate, isPending } = useLogin();
+
+  const [showPassword, setShowPassword] = useState(false); // State to toggle password visibility
 
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
@@ -40,10 +44,14 @@ export const SignInCard = () => {
     mutate({ json: values });
   };
 
+  const togglePasswordVisibility = () => {
+    setShowPassword((prev) => !prev); // Toggle the password visibility
+  };
+
   return (
     <Card className="w=full h-full md:w-[487px] border-none shadow-none">
       <CardHeader className="flex items-center justify-center text-center p-7">
-        <CardTitle className="text-2xl:">Welcome Back!</CardTitle>
+        <CardTitle className="text-2xl">Welcome Back!</CardTitle>
       </CardHeader>
       <div className="px-7">
         <DottedSeparator />
@@ -72,12 +80,22 @@ export const SignInCard = () => {
               control={form.control}
               render={({ field }) => (
                 <FormItem>
-                  <FormControl>
-                    <Input
-                      {...field}
-                      type="password"
-                      placeholder="Enter Password"
-                    />
+                  <FormControl className="relative">
+                    <div className="flex items-center w-full">
+                      <Input
+                        {...field}
+                        type={showPassword ? "text" : "password"} // Toggle input type based on showPassword state
+                        placeholder="Enter Password"
+                      />
+                      {/* Show eye icon to toggle password visibility */}
+                      <button
+                        type="button"
+                        onClick={togglePasswordVisibility}
+                        className="absolute right-3 top-3 text-gray-500"
+                      >
+                        {showPassword ? <FaEyeSlash /> : <FaEye />}
+                      </button>
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
