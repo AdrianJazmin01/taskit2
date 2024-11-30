@@ -11,8 +11,8 @@ const Room = ({ params }: { params: { roomid: string } }) => {
 
   let myMeeting: any = async (element: any) => {
     // generate Kit Token
-    const appID = parseInt(process.env.NEXT_PUBLIC_API_KEY!);
-    const serverSecret = process.env.NEXT_PUBLIC_SERVER_SECRET_KEY!;
+    const appID = parseInt(process.env.NEXT_PUBLIC_MEET_API_KEY!);
+    const serverSecret = process.env.NEXT_PUBLIC_MEET_SERVER_SECRET_KEY!;
     const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
       appID,
       serverSecret,
